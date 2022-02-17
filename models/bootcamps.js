@@ -42,12 +42,10 @@ const BootcampSchema = new mongoose.Schema({
         // geojson point
         type: {
             type: String,
-            enum: ['Point'],
-            required: false
+            enum: ['Point']
         },
         coordinates: {
             type: [Number],
-            required: false,
             index: '2dsphere'
         },
         formattedAddress: String,
@@ -113,7 +111,7 @@ BootcampSchema.pre('save', async function(next) {
     const loc = await geocoder.geocode(this.address);
     this.location = {
         type: 'Point',
-        coordinates: [loc[0].latitude, loc[0].longitude],
+        coordinates: [loc[0].longitude, loc[0].latitude],
         formattedAddress: loc[0].formattedAddress,
         street: loc[0].streetName,
         city: loc[0].city,

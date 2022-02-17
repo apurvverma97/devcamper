@@ -11,6 +11,8 @@ const Bootcamp = require('./models/bootcamps');
 // Connect to db
 mongoose.connect(process.env.NODE_MONGO_URI, {
     useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
     useUnifiedTopology: true
 });
 
@@ -31,7 +33,7 @@ const importData = async () => {
 }
 
 // remove data
-const deleteData = async() => {
+const deleteData = async () => {
     try {
         await Bootcamp.deleteMany();
         console.log('Data destroyed');
@@ -41,9 +43,9 @@ const deleteData = async() => {
     process.exit();
 }
 
-if(process.argv[2] === '-i' ){
+if (process.argv[2] === '-i') {
     importData();
 }
-else if(process.argv[2] === '-d'){
+else if (process.argv[2] === '-d') {
     deleteData();
 }
