@@ -6,7 +6,14 @@ const { getBootcamps,
     deleteBootcampById,
     getBootcampsInRadius } = require('../controllers/bootcamps');
 
+// Construct resource router
+const courseRouter = require('./courses')
+
+// Bootcamp router
 const router = express.Router();
+
+// Re-route resource to courseRouter
+router.use('/:bootcampId/courses', courseRouter );
 
 
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
