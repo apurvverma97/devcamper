@@ -1,26 +1,62 @@
-const Course = require('../models/courses');
-const asyncHandler = require('../middlewares/async')
-const ErrorResponse = require('../utils/errorResponse');
+const Course = require("../models/courses");
+const Bootcamp = require("../models/bootcamps");
+const mongoose = require("mongoose");
+const asyncHandler = require("../middlewares/async");
+const errorResponse = require("../utils/errorResponse");
+
 
 // @desc Get all courses
-// @route GET /api/v1/courses
-// @route GET /api/v1/bootcamps/:bootcampId/courses
+// @route /api/v1/courses
+// @route /api/v1/bootcamps/:bootcampId/courses
+// @access public
 
 exports.getCourses = asyncHandler(async (req, res, next) => {
     let query;
-
-    console.log
     if (req.params.bootcampId) {
-        query = Course.find({ bootcamp: req.params.bootcampId });
-    }
+        query = Course.find({ bootcamp: req.params.bootcampId });}
     else {
-        query = Course.find();
-    }
-
-    const Courses = await query;
+        query = Course.find().populate({
+                path: 'bootcamp',
+                select: 'name createdAt'});}
+    const courses = await query;
     return res.status(200).json({
         success: true,
-        count: Courses.length,
-        data: Courses
+        count: courses.length,
+        data: courses
+    });
+});
+
+
+// @desc  Get single course
+// @route /api/v1/courses/:id
+// @access public
+
+exports.getCourse = asyncHandler( async(req, res, next) => {
+    const course = await Course.findById({ _id: req.params.id }).populate({
+        path: 'bootcamp',
+        select: 'name description'
+    });
+    if(!course){
+        return next(new errorResponse(`No course found with id of: ${ req.params.id }`, 404)); }
+    return res.status(200).json({
+        success: true,
+        data: course });
+});
+
+// @desc Create Course
+// @route /api/v1/bootcamps/:bootcampId/courses
+// @acess private
+
+exports.createCourse = asyncHandler( async(req,res,next) => {
+    req.body.bootcamp = req.params.bootcampId;
+
+    const bootcamp = await Bootcamp.findById({ _id: req.params.bootcampId });
+    if(!bootcamp) {
+        return next(new errorResponse(`No bootcamp resource with id of ${req.params.bootcampId}`, 404));
+    }
+    const course = await Course.create(req.body);
+    return res.status(201).json({
+        success: true,
+        data: course
     });
 });

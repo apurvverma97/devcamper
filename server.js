@@ -7,7 +7,11 @@ const errorHandler = require('./middlewares/error')
 
 // import js having routes
 const bootcamps = require('./routes/bootcamps');
+<<<<<<< HEAD
 const courses = require('./routes/courses');
+=======
+const courses   = require('./routes/courses');
+>>>>>>> develop
 
 // loading environment variables
 dotenv.config({path : './config/config.env'});
