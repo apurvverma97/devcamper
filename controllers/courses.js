@@ -105,7 +105,7 @@ exports.deleteCourse = asyncHandler(async (req,res,next) => {
         });
     }
 
-    course.remove();
+    await course.remove();
     return res.status(200).json({
         success: true,
         data: course
