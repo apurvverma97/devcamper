@@ -5,8 +5,8 @@ const asyncHandler = require("../middlewares/async");
 const errorResponse = require("../utils/errorResponse");
 
 // @desc Get all courses
-// @route /api/v1/courses
-// @route /api/v1/bootcamps/:bootcampId/courses
+// @route GET /api/v1/courses
+// @route GET /api/v1/bootcamps/:bootcampId/courses
 // @access public
 
 exports.getCourses = asyncHandler(async (req, res, next) => {
@@ -28,7 +28,7 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
 });
 
 // @desc  Get single course
-// @route /api/v1/courses/:id
+// @route GET /api/v1/courses/:id
 // @access public
 
 exports.getCourse = asyncHandler(async (req, res, next) => {
@@ -48,7 +48,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 });
 
 // @desc Create Course
-// @route /api/v1/bootcamps/:bootcampId/courses
+// @route POST /api/v1/bootcamps/:bootcampId/courses
 // @acess private
 
 exports.createCourse = asyncHandler(async (req, res, next) => {
@@ -71,7 +71,7 @@ exports.createCourse = asyncHandler(async (req, res, next) => {
 });
 
 // @desc Update Course
-// @route /api/v1/courses/:id
+// @route PUT /api/v1/courses/:id
 // @access private
 
 exports.updateCourse = asyncHandler(async (req, res, next) => {
@@ -90,4 +90,24 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     success: true,
     data: course,
   });
+});
+
+// @desc Delete Course
+// @route DELETE /api/v1/courses/:id
+// @access private
+
+exports.deleteCourse = asyncHandler(async (req,res,next) => {
+    const course = await Course.findById(req.params.id);
+
+    if(!course){
+        return res.status(400).json({
+            success: false
+        });
+    }
+
+    await course.remove();
+    return res.status(200).json({
+        success: true,
+        data: course
+    });
 });
