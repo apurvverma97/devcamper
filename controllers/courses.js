@@ -1,6 +1,5 @@
 const Course = require("../models/courses");
 const Bootcamp = require("../models/bootcamps");
-const mongoose = require("mongoose");
 const asyncHandler = require("../middlewares/async");
 const errorResponse = require("../utils/errorResponse");
 
@@ -12,19 +11,16 @@ const errorResponse = require("../utils/errorResponse");
 exports.getCourses = asyncHandler(async (req, res, next) => {
   let query;
   if (req.params.bootcampId) {
-    query = Course.find({ bootcamp: req.params.bootcampId });
-  } else {
-    query = Course.find().populate({
-      path: "bootcamp",
-      select: "name createdAt",
+    await Course.find({ bootcamp: req.params.bootcampId });
+
+    return res.status(200).json({
+      success: true,
+      count: courses.length,
+      data: courses,
     });
+  } else {
+    return res.status(200).json(res.advancedResults);
   }
-  const courses = await query;
-  return res.status(200).json({
-    success: true,
-    count: courses.length,
-    data: courses,
-  });
 });
 
 // @desc  Get single course
@@ -96,18 +92,18 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
 // @route DELETE /api/v1/courses/:id
 // @access private
 
-exports.deleteCourse = asyncHandler(async (req,res,next) => {
-    const course = await Course.findById(req.params.id);
+exports.deleteCourse = asyncHandler(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
 
-    if(!course){
-        return res.status(400).json({
-            success: false
-        });
-    }
-
-    await course.remove();
-    return res.status(200).json({
-        success: true,
-        data: course
+  if (!course) {
+    return res.status(400).json({
+      success: false,
     });
+  }
+
+  await course.remove();
+  return res.status(200).json({
+    success: true,
+    data: course,
+  });
 });
