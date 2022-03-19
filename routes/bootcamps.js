@@ -1,3 +1,5 @@
+const Bootcamp = require('../models/bootcamps');
+const advancedResults  = require('../middlewares/advancedResults');
 const express = require('express');
 const { getBootcamps,
     getBootcampById,
@@ -24,7 +26,7 @@ router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
 
 // Get all bootcamps and create a single
 router.route('/')
-    .get(getBootcamps)
+    .get(advancedResults(Bootcamp, 'Courses'), getBootcamps)
     .post(createBootcamp);
 
 // Get, Update and Delete a bootcamp vid id
