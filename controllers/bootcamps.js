@@ -1,7 +1,8 @@
+const path = require('path');
 const Bootcamp = require('../models/bootcamps');
-const asyncHandler = require('../middlewares/async')
+const asyncHandler = require('../middlewares/async');
 const ErrorResponse = require('../utils/errorResponse');
-const geocoder = require('../utils/geocoder')
+const geocoder = require('../utils/geocoder');
 
 // @desc   Get all bootcamps
 // @route  GET /api/v1/bootcamps/
@@ -151,3 +152,55 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
         data: bootcamps
     })
 })
+
+// @desc Photo upload for bootcamp
+// @route PUT /api/v1/bootcamps/:id/photos
+// @access public
+
+exports.uploadBootcampPhoto = asyncHandler( async (req,res,next) => {
+
+    let bootcamp;
+    if(req.params.id){
+        bootcamp = await Bootcamp.findById(req.params.id);   
+    }
+
+    if(!bootcamp){
+        return next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404));
+    }
+
+    if(!req.files){
+        return next(new ErrorResponse(`Please upload a file`, 400));
+    }
+
+    const file = req.files.file;
+
+    // Validation image should be having mimetype starting with image
+    if(!file.mimetype.startsWith('image')){
+        return next(new ErrorResponse('Please upload an image file', 400));
+    }
+
+    // Check for file size
+    if(file.size > process.env.MAX_FILE_SIZE){
+        return next(new ErrorResponse('Bad image', 400));
+    }
+
+    // Create custom filename
+    file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+
+    file.mv(`${process.env.FILE_UPLOAD_DIRECTORY}/${file.name}`, async err => {
+        if(err){
+            console.log(err);
+            return next(new ErrorResponse('Error occured while upload', 500));
+        }
+        await Bootcamp.findByIdAndUpdate(req.params.id, {
+            photo: `${file.name}`
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                file: file.name
+            }
+        })
+    });
+});

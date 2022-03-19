@@ -1,9 +1,12 @@
+const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv'); 
 const logger = require('./middlewares/logger');
+const fileupload = require('express-fileupload');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/error')
+
 
 // import js having routes
 const bootcamps = require('./routes/bootcamps');
@@ -22,11 +25,17 @@ const app = express();
 // body parser
 app.use(express.json());
 
-// establishing mongoDb connection
-connectDB();
+// Static folder
+app.use(express.static(path.join(__dirname,'public')));
+
+// file upload middleware
+app.use(fileupload());
 
 // mounting logger
 app.use(morgan('dev'));
+
+// establishing mongoDb connection
+connectDB();
 
 // mounting routes
 app.use('/api/v1/bootcamps', bootcamps);

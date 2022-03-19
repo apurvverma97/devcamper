@@ -20,5 +20,8 @@
     "node-gyp": "^8.4.1",
     "nodemon": "^2.0.15",
     "slugify": "^1.6.5"
+  },
+  "devDependencies": {
+    "express-fileupload": "^1.3.1"
   }
 }
