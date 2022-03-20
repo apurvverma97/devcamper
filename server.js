@@ -11,6 +11,7 @@ const errorHandler = require('./middlewares/error')
 // import js having routes
 const bootcamps = require('./routes/bootcamps');
 const courses   = require('./routes/courses');
+const auth = require('./routes/auth');
 
 // loading environment variables
 dotenv.config({path : './config/config.env'});
@@ -36,6 +37,7 @@ connectDB();
 // mounting routes
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
+app.use('/api/v1/auth', auth);
 
 // mounting erorr handler
 app.use(errorHandler);
