@@ -40,6 +40,25 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   // Check if email exists in db
+  const user = await User.findOne({ email }).select('+password');
 
+  if(!user){
+    return next(new ErrorResponse(`Unauthorized`, 401));
+  }
 
+  // Match password
+  const isAuthorized = user.matchPassword(password);
+
+  if(!isAuthorized){
+    return next(new ErrorResponse(`Unauthorized`, 401));
+  }
+
+  // mint token
+  const token = await user.getSignedJwt();
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+    token: token
+  });
 })
