@@ -21,7 +21,7 @@ const router = express.Router();
 router.use('/:bootcampId/courses', courseRouter );
 
 // Photo-upload route
-router.route('/:id/photos').put(uploadBootcampPhoto);
+router.route('/:id/photos').put(isAuthenticated,uploadBootcampPhoto);
 
 // Get bootcamps in radius route
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
@@ -29,12 +29,12 @@ router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
 // Get all bootcamps and create a single
 router.route('/')
     .get(advancedResults(Bootcamp, 'Courses'), getBootcamps)
-    .post(createBootcamp);
+    .post(isAuthenticated,createBootcamp);
 
 // Get, Update and Delete a bootcamp via id
 router.route('/:id')
     .get(getBootcampById)
     .put(isAuthenticated ,updateBootcampById)
-    .delete(deleteBootcampById);
+    .delete(isAuthenticated,deleteBootcampById);
 
 module.exports = router;
