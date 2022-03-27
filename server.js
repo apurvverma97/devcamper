@@ -5,7 +5,9 @@ const logger = require('./middlewares/logger');
 const fileupload = require('express-fileupload');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
-const errorHandler = require('./middlewares/error')
+const errorHandler = require('./middlewares/error');
+const cookieparser = require('cookie-parser');
+
 
 
 // import js having routes
@@ -27,6 +29,9 @@ app.use(express.static(path.join(__dirname,'public')));
 
 // file upload middleware
 app.use(fileupload());
+
+// cookie parser middleware
+app.use(cookieparser());
 
 // mounting logger
 app.use(morgan('dev'));

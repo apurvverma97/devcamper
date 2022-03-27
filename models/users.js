@@ -41,8 +41,8 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.methods.getSignedJwt = async function(){
-  return await jwt.sign({ id : this._id }, process.env.JWT_SECRET, {
+UserSchema.methods.getSignedJwt = function(){
+  return jwt.sign({ id : this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRY
   });
 }
