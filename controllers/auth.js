@@ -48,6 +48,19 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc Get user from token
+// @route POST /api/v1/auth/me
+// @access Public
+
+exports.me = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  return res.status(200).json({
+    success: true,
+    data: user
+  });
+});
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
@@ -57,13 +70,11 @@ const sendTokenResponse = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRY * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true
+    httpOnly: true,
   };
 
-  return res.status(statusCode)
-            .cookie('token', token, options)
-            .json({
+  return res.status(statusCode).cookie("token", token, options).json({
     success: true,
-    data: token
+    token: token,
   });
 };
