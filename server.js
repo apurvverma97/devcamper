@@ -14,7 +14,6 @@ const cookieparser = require('cookie-parser');
 const bootcamps = require('./routes/bootcamps');
 
 const courses = require('./routes/courses');
-const courses   = require('./routes/courses');
 const auth = require('./routes/auth');
 
 // loading environment variables

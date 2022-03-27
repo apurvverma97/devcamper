@@ -23,10 +23,8 @@ exports.isAuthenticated = asyncHandler(async (req, res, next) => {
   try {
     // Decode JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
     // Search for user in mongo
-    const user = User.findOne(decoded.id);
-    console.log(user);
+    req.user = await User.findById(decoded.id);
     next();} 
     catch (error) {
       console.log(error);
