@@ -12,6 +12,8 @@ const cookieparser = require('cookie-parser');
 
 // import js having routes
 const bootcamps = require('./routes/bootcamps');
+
+const courses = require('./routes/courses');
 const courses   = require('./routes/courses');
 const auth = require('./routes/auth');
 
