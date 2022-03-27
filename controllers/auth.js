@@ -1,6 +1,5 @@
 const User = require("../models/users");
 const asyncHandler = require("../middlewares/async");
-const errorHandler = require("../middlewares/error");
 const ErrorResponse = require("../utils/errorResponse");
 
 // @desc Register a new user
@@ -17,15 +16,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     role,
   });
 
-  const token = await user.getSignedJwt();
-
-  res.status(200).json({
-    success: true,
-    data: user,
-    token: token
-  });
+  sendTokenResponse(user, 200, res);
 });
-
 
 // @desc Login
 // @route POST /api/v1/auth/login
@@ -35,30 +27,43 @@ exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Check if email and password are present
-  if(!email || !password){
+  if (!email || !password) {
     next(new ErrorResponse(`Please enter email and password`, 400));
   }
 
   // Check if email exists in db
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select("+password");
 
-  if(!user){
+  if (!user) {
     return next(new ErrorResponse(`Unauthorized`, 401));
   }
 
   // Match password
   const isAuthorized = user.matchPassword(password);
 
-  if(!isAuthorized){
+  if (!isAuthorized) {
     return next(new ErrorResponse(`Unauthorized`, 401));
   }
 
-  // mint token
-  const token = await user.getSignedJwt();
+  sendTokenResponse(user, 200, res);
+});
 
-  return res.status(200).json({
+// Get token from model, create cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
+  // Create token
+  const token = user.getSignedJwt();
+
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRY * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true
+  };
+
+  return res.status(statusCode)
+            .cookie('token', token, options)
+            .json({
     success: true,
-    data: user,
-    token: token
+    data: token
   });
-})
+};

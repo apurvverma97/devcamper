@@ -1,5 +1,7 @@
 const Bootcamp = require('../models/bootcamps');
 const advancedResults  = require('../middlewares/advancedResults');
+const { isAuthenticated } = require('../middlewares/auth');
+
 const express = require('express');
 const { getBootcamps,
     getBootcampById,
@@ -29,10 +31,10 @@ router.route('/')
     .get(advancedResults(Bootcamp, 'Courses'), getBootcamps)
     .post(createBootcamp);
 
-// Get, Update and Delete a bootcamp vid id
+// Get, Update and Delete a bootcamp via id
 router.route('/:id')
     .get(getBootcampById)
-    .put(updateBootcampById)
+    .put(isAuthenticated ,updateBootcampById)
     .delete(deleteBootcampById);
 
 module.exports = router;
