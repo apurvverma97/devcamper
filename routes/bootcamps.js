@@ -36,6 +36,6 @@ router.route('/')
 router.route('/:id')
     .get(getBootcampById)
     .put(isAuthenticated, isAuthorized('publisher', 'admin'), updateBootcampById)
-    .delete(isAuthenticated,deleteBootcampById);
+    .delete(isAuthenticated, isAuthorized('publisher', 'admin'), deleteBootcampById);
 
 module.exports = router;
