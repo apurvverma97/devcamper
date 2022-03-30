@@ -39,7 +39,8 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   // Match password
-  const isAuthorized = user.matchPassword(password);
+  const isAuthorized = await user.matchPassword(password);
+  console.log(isAuthorized);
 
   if (!isAuthorized) {
     return next(new ErrorResponse(`Unauthorized`, 401));
